@@ -226,6 +226,17 @@ However, you can use the `scaleUp` command-line flag to allow this to happen:
 
     imageproxy -scaleUp true
 
+### Override response Cache-Control headers ###
+
+By default, the imageproxy forwards the Cahce-Control header fetched from the remote.
+You can override the Cache-Control header in response with `-responseCacheControl`:
+
+    imageproxy -responseCacheControl 'public, max-age=31536000, immutable'
+
+You can also override the Cache-Control header in error responses with `-responseCacheControlOnError`:
+
+    imageproxy -responseCacheControlOnError 'private, no-cache, no-store, must-revalidate'
+
 ### WebP and TIFF support ###
 
 Imageproxy can proxy remote webp images, but they will be served in either jpeg

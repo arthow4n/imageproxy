@@ -46,6 +46,8 @@ var whitelist = flag.String("whitelist", "", "comma separated list of allowed re
 var referrers = flag.String("referrers", "", "comma separated list of allowed referring hosts")
 var baseURL = flag.String("baseURL", "", "default base URL for relative remote URLs")
 var cache tieredCache
+var responseCacheControl = flag.String("responseCacheControl", "", "customize response Cache-Control header value")
+var responseCacheControlOnError = flag.String("responseCacheControlOnError", "", "customize response Cache-Control header value on error")
 var signatureKey = flag.String("signatureKey", "", "HMAC key used in calculating request signatures")
 var scaleUp = flag.Bool("scaleUp", false, "allow images to scale beyond their original dimensions")
 var timeout = flag.Duration("timeout", 0, "time limit for requests served by this proxy")
@@ -85,6 +87,9 @@ func main() {
 			log.Fatalf("error parsing baseURL: %v", err)
 		}
 	}
+
+	p.ResponseCacheControl = *responseCacheControl
+	p.ResponseCacheControlOnError = *responseCacheControlOnError
 
 	p.Timeout = *timeout
 	p.ScaleUp = *scaleUp
