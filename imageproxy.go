@@ -28,6 +28,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -68,6 +69,7 @@ type Proxy struct {
 	// If true, log additional debug messages
 	Verbose bool
 
+	ResponseCacheControlOnlyOn  *regexp.Regexp
 	ResponseCacheControl        string
 	ResponseCacheControlOnError string
 }
@@ -146,7 +148,9 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := p.Client.Get(req.String())
+	remote := req.String()
+
+	resp, err := p.Client.Get(remote)
 	if err != nil {
 		msg := fmt.Sprintf("error fetching remote image: %v", err)
 		log.Print(msg)
@@ -173,7 +177,9 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 	//Enable CORS for 3rd party applications
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	p.setResponseCacheControl(w)
+	if p.ResponseCacheControlOnlyOn.MatchString(remote) {
+		p.setResponseCacheControl(w)
+	}
 
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)

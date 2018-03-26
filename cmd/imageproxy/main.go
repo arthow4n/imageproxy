@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -47,6 +48,7 @@ var referrers = flag.String("referrers", "", "comma separated list of allowed re
 var baseURL = flag.String("baseURL", "", "default base URL for relative remote URLs")
 var cache tieredCache
 var responseCacheControl = flag.String("responseCacheControl", "", "customize response Cache-Control header value")
+var responseCacheControlOnlyOnRemotePattern = flag.String("responseCacheControlOnlyOnRemotePattern", "", "only apply Cache-Control header on specified remote URL pattern (regexp)")
 var responseCacheControlOnError = flag.String("responseCacheControlOnError", "", "customize response Cache-Control header value on error")
 var signatureKey = flag.String("signatureKey", "", "HMAC key used in calculating request signatures")
 var scaleUp = flag.Bool("scaleUp", false, "allow images to scale beyond their original dimensions")
@@ -89,6 +91,11 @@ func main() {
 	}
 
 	p.ResponseCacheControl = *responseCacheControl
+	var err error
+	p.ResponseCacheControlOnlyOn, err = regexp.Compile(*responseCacheControlOnlyOnRemotePattern)
+	if err != nil {
+		log.Fatalf("error parsing responseCacheControlOnlyOnRemotePattern: %v", err)
+	}
 	p.ResponseCacheControlOnError = *responseCacheControlOnError
 
 	p.Timeout = *timeout
