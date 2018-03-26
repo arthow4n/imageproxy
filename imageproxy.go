@@ -69,9 +69,10 @@ type Proxy struct {
 	// If true, log additional debug messages
 	Verbose bool
 
-	ResponseCacheControlOnlyOn  *regexp.Regexp
-	ResponseCacheControl        string
-	ResponseCacheControlOnError string
+	RccIf      *regexp.Regexp
+	Rcc        string
+	RccElse    string
+	RccOnError string
 }
 
 // NewProxy constructs a new proxy.  The provided http RoundTripper will be
@@ -133,7 +134,7 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		msg := fmt.Sprintf("invalid request URL: %v", err)
 		log.Print(msg)
-		p.setResponseCacheControlOnError(w)
+		p.setRccOnError(w)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
@@ -143,7 +144,7 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 
 	if err := p.allowed(req); err != nil {
 		log.Print(err)
-		p.setResponseCacheControlOnError(w)
+		p.setRccOnError(w)
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
@@ -154,7 +155,7 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		msg := fmt.Sprintf("error fetching remote image: %v", err)
 		log.Print(msg)
-		p.setResponseCacheControlOnError(w)
+		p.setRccOnError(w)
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
@@ -177,23 +178,26 @@ func (p *Proxy) serveImage(w http.ResponseWriter, r *http.Request) {
 	//Enable CORS for 3rd party applications
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	if p.ResponseCacheControlOnlyOn.MatchString(remote) {
-		p.setResponseCacheControl(w)
+	// Override response cache-control headers
+	if p.RccIf.MatchString(remote) {
+		p.setRcc(w, p.Rcc)
+	} else {
+		p.setRcc(w, p.RccElse)
 	}
 
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 }
 
-func (p *Proxy) setResponseCacheControl(w http.ResponseWriter) {
-	if len(p.ResponseCacheControl) > 0 {
-		w.Header().Set("Cache-Control", p.ResponseCacheControl)
+func (p *Proxy) setRcc(w http.ResponseWriter, s string) {
+	if len(s) > 0 {
+		w.Header().Set("Cache-Control", s)
 	}
 }
 
-func (p *Proxy) setResponseCacheControlOnError(w http.ResponseWriter) {
-	if len(p.ResponseCacheControlOnError) > 0 {
-		w.Header().Set("Cache-Control", p.ResponseCacheControlOnError)
+func (p *Proxy) setRccOnError(w http.ResponseWriter) {
+	if len(p.RccOnError) > 0 {
+		w.Header().Set("Cache-Control", p.RccOnError)
 	}
 }
 

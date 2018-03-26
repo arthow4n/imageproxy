@@ -47,9 +47,10 @@ var whitelist = flag.String("whitelist", "", "comma separated list of allowed re
 var referrers = flag.String("referrers", "", "comma separated list of allowed referring hosts")
 var baseURL = flag.String("baseURL", "", "default base URL for relative remote URLs")
 var cache tieredCache
-var responseCacheControl = flag.String("responseCacheControl", "", "customize response Cache-Control header value")
-var responseCacheControlOnlyOnRemotePattern = flag.String("responseCacheControlOnlyOnRemotePattern", "", "only apply Cache-Control header on specified remote URL pattern (regexp)")
-var responseCacheControlOnError = flag.String("responseCacheControlOnError", "", "customize response Cache-Control header value on error")
+var rcc = flag.String("rcc", "", "customize response Cache-Control header value")
+var rccIf = flag.String("rccIf", "", "only apply Cache-Control header on specified remote URL pattern (regexp)")
+var rccElse = flag.String("rccElse", "", "customize response Cache-Control header value")
+var rccOnError = flag.String("rccOnError", "", "customize response Cache-Control header value on error")
 var signatureKey = flag.String("signatureKey", "", "HMAC key used in calculating request signatures")
 var scaleUp = flag.Bool("scaleUp", false, "allow images to scale beyond their original dimensions")
 var timeout = flag.Duration("timeout", 0, "time limit for requests served by this proxy")
@@ -90,13 +91,14 @@ func main() {
 		}
 	}
 
-	p.ResponseCacheControl = *responseCacheControl
+	p.Rcc = *rcc
+	p.RccElse = *rccElse
 	var err error
-	p.ResponseCacheControlOnlyOn, err = regexp.Compile(*responseCacheControlOnlyOnRemotePattern)
+	p.RccIf, err = regexp.Compile(*rccIf)
 	if err != nil {
-		log.Fatalf("error parsing responseCacheControlOnlyOnRemotePattern: %v", err)
+		log.Fatalf("error parsing rccIf: %v", err)
 	}
-	p.ResponseCacheControlOnError = *responseCacheControlOnError
+	p.RccOnError = *rccOnError
 
 	p.Timeout = *timeout
 	p.ScaleUp = *scaleUp

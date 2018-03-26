@@ -229,13 +229,18 @@ However, you can use the `scaleUp` command-line flag to allow this to happen:
 ### Override response Cache-Control headers ###
 
 By default, the imageproxy forwards the Cahce-Control header fetched from the remote.
-You can override the Cache-Control header in response with `-responseCacheControl`:
+You can override the Cache-Control header in response with `-rcc`:
 
-    imageproxy -responseCacheControl 'public, max-age=31536000, immutable'
+    imageproxy -rcc 'public, max-age=31536000, immutable'
 
-You can also override the Cache-Control header in error responses with `-responseCacheControlOnError`:
+Or conditionally set the Cache-Control header only when remote URL matches `-rccIf`,
+and fallback to the header set with `-rccElse` when it doesn't.
 
-    imageproxy -responseCacheControlOnError 'private, no-cache, no-store, must-revalidate'
+    imageproxy -rcc 'public, max-age=31536000, immutable' -rccIf '-[a-f0-9]{64}\..*' -rccElse 'public, max-age=86400'
+
+You can also override the Cache-Control header in error responses with `-rccOnError`:
+
+    imageproxy -rccOnError 'private, no-cache, no-store, must-revalidate'
 
 ### WebP and TIFF support ###
 
