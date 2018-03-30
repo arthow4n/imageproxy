@@ -26,6 +26,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/PaulARoy/azurestoragecache"
@@ -47,6 +48,7 @@ var whitelist = flag.String("whitelist", "", "comma separated list of allowed re
 var referrers = flag.String("referrers", "", "comma separated list of allowed referring hosts")
 var baseURL = flag.String("baseURL", "", "default base URL for relative remote URLs")
 var cache tieredCache
+var maxConnections = flag.Uint64("maxConnections", 10, "limit max active connections")
 var rcc = flag.String("rcc", "", "customize response Cache-Control header value")
 var rccIf = flag.String("rccIf", "", "only apply Cache-Control header on specified remote URL pattern (regexp)")
 var rccElse = flag.String("rccElse", "", "customize response Cache-Control header value")
@@ -59,6 +61,23 @@ var version = flag.Bool("version", false, "Deprecated: this flag does nothing")
 
 func init() {
 	flag.Var(&cache, "cache", "location to cache images (see https://github.com/willnorris/imageproxy#cache)")
+}
+
+var connections uint64 = 0
+
+func maxConnectionsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if connections >= *maxConnections {
+			w.Header().Set("Content-Type", "text/html")
+			w.Header().Set("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate")
+			w.WriteHeader(http.StatusServiceUnavailable)
+			fmt.Fprintln(w, "Too many active connections")
+			return
+		}
+		atomic.AddUint64(&connections, 1)
+		next.ServeHTTP(w, r)
+		atomic.AddUint64(&connections, ^uint64(0))
+	})
 }
 
 func main() {
@@ -106,7 +125,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    *addr,
-		Handler: p,
+		Handler: maxConnectionsMiddleware(p),
 	}
 
 	fmt.Printf("imageproxy listening on %s\n", server.Addr)
