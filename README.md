@@ -233,7 +233,7 @@ You can override the Cache-Control header in response with `-rcc`:
 
     imageproxy -rcc 'public, max-age=31536000, immutable'
 
-Or conditionally set the Cache-Control header only when remote URL matches `-rccIf`,
+Or conditionally set the Cache-Control header specified in `-rcc` only when remote URL matches `-rccIf`,
 and fallback to the header set with `-rccElse` when it doesn't.
 
     imageproxy -rcc 'public, max-age=31536000, immutable' -rccIf '-[a-f0-9]{64}\..*' -rccElse 'public, max-age=86400'

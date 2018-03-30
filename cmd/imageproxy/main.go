@@ -67,7 +67,7 @@ var connections uint64 = 0
 
 func maxConnectionsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if connections >= *maxConnections {
+		if connections >= atomic.LoadUint64(maxConnections) {
 			w.Header().Set("Content-Type", "text/html")
 			w.Header().Set("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate")
 			w.WriteHeader(http.StatusServiceUnavailable)
@@ -75,8 +75,8 @@ func maxConnectionsMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		atomic.AddUint64(&connections, 1)
+		defer atomic.AddUint64(&connections, ^uint64(0))
 		next.ServeHTTP(w, r)
-		atomic.AddUint64(&connections, ^uint64(0))
 	})
 }
 
