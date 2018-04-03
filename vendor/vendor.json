@@ -51,6 +51,12 @@
 			"revisionTime": "2018-01-31T20:58:25Z"
 		},
 		{
+			"checksumSHA1": "6+/hUP6GsT/FUmxrD+StwiHGYTk=",
+			"path": "code.cloudfoundry.org/bytefmt",
+			"revision": "b31f603f5e1e047fdb38584e1a922dcc5c4de5c8",
+			"revisionTime": "2018-01-08T18:25:06Z"
+		},
+		{
 			"checksumSHA1": "Q11VoP2I9ES8zeMHPsGhy9BxJMQ=",
 			"path": "github.com/Azure/azure-sdk-for-go/storage",
 			"revision": "a75e7321dcb5045edbbdba24b594d8f3f1b31352",
@@ -85,6 +91,12 @@
 			"path": "github.com/PaulARoy/azurestoragecache",
 			"revision": "3c249a3ba78867d6f4e2fc7f5264145ffb5dd0d9",
 			"revisionTime": "2017-09-06T08:45:34Z"
+		},
+		{
+			"checksumSHA1": "3kX711WTuMgIjYdPqZ/fexoC4w0=",
+			"path": "github.com/ashwanthkumar/slack-go-webhook",
+			"revision": "eb0e8e892f3ae0359ab8bd2777e7fb727ba28113",
+			"revisionTime": "2018-03-19T06:36:40Z"
 		},
 		{
 			"checksumSHA1": "3qbWQO79tzfxr3IXc5P/l0XbVaI=",
@@ -273,6 +285,12 @@
 			"revisionTime": "2017-12-29T01:14:44Z"
 		},
 		{
+			"checksumSHA1": "9JB5iYnIhSc60Nfe3YDLhokKvHE=",
+			"path": "github.com/go-chi/httpcoala",
+			"revision": "2dc54485b65f38d74bc720618f9bbdd3a3372a31",
+			"revisionTime": "2017-10-31T17:00:40Z"
+		},
+		{
 			"checksumSHA1": "VvZKmbuBN1QAG699KduTdmSPwA4=",
 			"origin": "github.com/aws/aws-sdk-go/vendor/github.com/go-ini/ini",
 			"path": "github.com/go-ini/ini",
@@ -359,6 +377,12 @@
 			"revisionTime": "2017-04-27T23:51:15Z"
 		},
 		{
+			"checksumSHA1": "CxNwJP++vjUAyy3bbJnNss1Il9Q=",
+			"path": "github.com/moul/http2curl",
+			"revision": "9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d",
+			"revisionTime": "2017-09-19T18:10:01Z"
+		},
+		{
 			"checksumSHA1": "EmBHokgSNY1B0aBQALGldIUyXgI=",
 			"path": "github.com/muesli/smartcrop",
 			"revision": "9032446b30f6284f8718490b6bcff8a1d51173cf",
@@ -371,10 +395,22 @@
 			"revisionTime": "2016-07-24T20:39:20Z"
 		},
 		{
+			"checksumSHA1": "UmYMPKuYIY/PPRYaixh8FuR0X64=",
+			"path": "github.com/parnurzeal/gorequest",
+			"revision": "a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3",
+			"revisionTime": "2017-02-20T17:20:57Z"
+		},
+		{
 			"checksumSHA1": "K1Y3/a6mmpc31MzB2pvsC5fHrek=",
 			"path": "github.com/peterbourgon/diskv",
 			"revision": "2973218375c3d13162e1d3afe1708aaee318ef3f",
 			"revisionTime": "2017-11-20T01:46:56Z"
+		},
+		{
+			"checksumSHA1": "ljd3FhYRJ91cLZz3wsH9BQQ2JbA=",
+			"path": "github.com/pkg/errors",
+			"revision": "816c9085562cd7ee03e7f8188a1cfd942858cded",
+			"revisionTime": "2018-03-11T21:45:15Z"
 		},
 		{
 			"checksumSHA1": "l6EC85ae4bAo+LT6GlejMwFms1I=",
@@ -495,6 +531,12 @@
 			"path": "golang.org/x/net/lex/httplex",
 			"revision": "b417086c80e91bfa321ef761574721644b8b9f61",
 			"revisionTime": "2018-02-01T22:46:22Z"
+		},
+		{
+			"checksumSHA1": "Q165MxF3KQE3AaU3GGPsKFLEFCU=",
+			"path": "golang.org/x/net/publicsuffix",
+			"revision": "b68f30494add4df6bd8ef5e82803f308e7f7c59c",
+			"revisionTime": "2018-03-18T08:05:40Z"
 		},
 		{
 			"checksumSHA1": "u/r66lwYfgg682u5hZG7/E7+VCY=",

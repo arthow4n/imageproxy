@@ -32,6 +32,7 @@ import (
 	"github.com/die-net/lrucache"
 	"github.com/die-net/lrucache/twotier"
 	"github.com/garyburd/redigo/redis"
+	"github.com/go-chi/httpcoala"
 	"github.com/gregjones/httpcache/diskcache"
 	rediscache "github.com/gregjones/httpcache/redis"
 	"github.com/peterbourgon/diskv"
@@ -104,9 +105,11 @@ func main() {
 	p.ScaleUp = *scaleUp
 	p.Verbose = *verbose
 
+	coalescingMiddleware := httpcoala.Route("*")
+
 	server := &http.Server{
 		Addr:    *addr,
-		Handler: p,
+		Handler: coalescingMiddleware(p),
 	}
 
 	fmt.Printf("imageproxy listening on %s\n", server.Addr)

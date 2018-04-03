@@ -22,19 +22,34 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"errors"
 	"fmt"
+	"image"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gregjones/httpcache"
 	tphttp "willnorris.com/go/imageproxy/third_party/http"
 )
+
+var imageDimensionLimit uint64 = 9000000
+
+func init() {
+	var s string
+
+	s = os.Getenv("IMAGE_DIMENSION_LIMIT")
+	if s != "" {
+		imageDimensionLimit, _ = strconv.ParseUint(s, 10, 64)
+	}
+}
 
 // Proxy serves image requests.
 type Proxy struct {
@@ -353,6 +368,27 @@ func (t *TransformingTransport) RoundTrip(req *http.Request) (*http.Response, er
 	defer resp.Body.Close()
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		return nil, err
+	}
+
+	imgconf, _, err := image.DecodeConfig(bytes.NewReader(b))
+	if err != nil {
+		log.Println("Failed image.DecodeConfig")
+		return nil, err
+	}
+
+	if uint64(imgconf.Width*imgconf.Height) > imageDimensionLimit {
+		postErrorToSlack(
+			"danger",
+			"圖片太大張啦！壓下去會壞掉！",
+			fmt.Sprint(
+				"request: ", req.URL, "\n",
+				"寬高: ", imgconf.Width, "x", imgconf.Height, "\n",
+				"維度: ", imgconf.Width*imgconf.Height, "\n",
+				"拋錯維度上限: 9000000 (約 3000x3000)",
+			),
+		)
+		err := errors.New("Remote image is too big")
 		return nil, err
 	}
 
