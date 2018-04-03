@@ -388,7 +388,7 @@ func (t *TransformingTransport) RoundTrip(req *http.Request) (*http.Response, er
 				"拋錯維度上限: 9000000 (約 3000x3000)",
 			),
 		)
-		err := errors.New("Remote image is too big")
+		err := errors.New(fmt.Sprintf("Remote image is too big: %vx%v, dim@%v", imgconf.Width, imgconf.Height, imgconf.Width*imgconf.Height))
 		return nil, err
 	}
 
